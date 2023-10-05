@@ -3,11 +3,20 @@ import { BLOG_TITLE } from "@/constants";
 import { loadBlogPost } from "@/helpers/file-helpers";
 import MDX_COMPONENTS_MAP from "@/helpers/mdx-components";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { notFound } from "next/navigation";
 import styles from "./postSlug.module.css";
 
 export async function generateMetadata({ params }) {
-  const { frontmatter } = await loadBlogPost(params.postSlug);
-  const { title, abstract, publishedOn } = frontmatter;
+  const post = await loadBlogPost(params.postSlug);
+
+  if (post === null) {
+    return {
+      title: "404 Not Found",
+      description: `The requested page ${params.postSlug} does not exist`,
+    };
+  }
+
+  const { title, abstract, publishedOn } = post.frontmatter;
 
   const metadataTitle = `${title} • ${BLOG_TITLE}`;
 
@@ -24,7 +33,13 @@ export async function generateMetadata({ params }) {
 }
 
 async function BlogPost({ params }) {
-  const { frontmatter, content } = await loadBlogPost(params.postSlug);
+  const post = await loadBlogPost(params.postSlug);
+
+  if (post === null) {
+    notFound();
+  }
+
+  const { frontmatter, content } = post;
 
   return (
     <article className={styles.wrapper}>
