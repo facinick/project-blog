@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import matter from "gray-matter";
 import path from "path";
-import React from "react";
+import { HOST, PORT } from "../constants";
 
 export async function getBlogPostList() {
   const fileNames = await readDirectory("/content");
@@ -22,7 +22,7 @@ export async function getBlogPostList() {
   return blogPosts.sort((p1, p2) => (p1.publishedOn < p2.publishedOn ? 1 : -1));
 }
 
-export const loadBlogPost = React.cache(async (slug) => {
+export const loadBlogPost = async (slug) => {
   let rawContent;
   try {
     rawContent = await readFile(`/content/${slug}.mdx`);
@@ -33,10 +33,26 @@ export const loadBlogPost = React.cache(async (slug) => {
   const { data: frontmatter, content } = matter(rawContent);
 
   return { frontmatter, content };
-});
+};
+
+export const getPostFullUrl = (slug) => {
+  return `http://${HOST}:${PORT}/${slug}`;
+};
 
 function readFile(localPath) {
   return fs.readFile(path.join(process.cwd(), localPath), "utf8");
+}
+
+export const readRss = async () => {
+  await readFile(`/public/rss.xml`);
+};
+
+export const saveRss = async (xml) => {
+  await writeFile(`/public/rss.xml`, xml);
+};
+
+function writeFile(localPath, content) {
+  return fs.writeFile(path.join(process.cwd(), localPath), content);
 }
 
 function readDirectory(localPath) {

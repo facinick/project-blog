@@ -1,6 +1,12 @@
 import Card from "@/components/Card";
+import { BLOG_TITLE } from "@/constants";
 import Link from "next/link";
 import styles from "./not-found.module.css";
+
+export const metadata = {
+  title: `404 Not found • ${BLOG_TITLE}`,
+};
+
 export default function NotFound() {
   return (
     <Card as="section" className={styles.wrapper}>

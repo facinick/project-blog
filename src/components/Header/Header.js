@@ -5,19 +5,25 @@ import { Moon, Rss, Sun } from "react-feather";
 import Logo from "@/components/Logo";
 import VisuallyHidden from "@/components/VisuallyHidden";
 
+import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeProvider/ThemeProvider";
 import styles from "./Header.module.css";
 
 function Header({ className, ...delegated }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const router = useRouter();
+  
+  const handleLoadRss = () => {
+    router.push(`/rss.xml`)
+  }
 
   return (
     <header className={clsx(styles.wrapper, className)} {...delegated}>
       <Logo />
 
       <div className={styles.actions}>
-        <button className={styles.action}>
+        <button onClick={handleLoadRss} className={styles.action}>
           <Rss
             size="1.5rem"
             style={{

@@ -10,10 +10,7 @@ export async function generateMetadata({ params }) {
   const post = await loadBlogPost(params.postSlug);
 
   if (post === null) {
-    return {
-      title: "404 Not Found",
-      description: `The requested page ${params.postSlug} does not exist`,
-    };
+    return null;
   }
 
   const { title, abstract, publishedOn } = post.frontmatter;
