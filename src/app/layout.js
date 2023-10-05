@@ -1,12 +1,13 @@
 import clsx from "clsx";
 import { Spline_Sans_Mono, Work_Sans } from "next/font/google";
 
-import { DARK_TOKENS, LIGHT_TOKENS } from "@/constants";
-
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { MotionConfig } from "@/components/MotionConfig/MotionConfig";
+import ThemeProvider from "@/components/ThemeProvider/ThemeProvider";
+import { getThemeOnServer } from "@/helpers/get-theme-on-server";
 import "./styles.css";
+import "./theme.css";
 
 const mainFont = Work_Sans({
   subsets: ["latin"],
@@ -14,6 +15,7 @@ const mainFont = Work_Sans({
   weight: "variable",
   variable: "--font-family",
 });
+
 const monoFont = Spline_Sans_Mono({
   subsets: ["latin"],
   display: "fallback",
@@ -22,22 +24,23 @@ const monoFont = Spline_Sans_Mono({
 });
 
 function RootLayout({ children }) {
-  // TODO: Dynamic theme depending on user preference
-  const theme = "light";
+  const savedTheme = getThemeOnServer();
+  const theme = savedTheme || "light";
 
   return (
     <html
       lang="en"
       className={clsx(mainFont.variable, monoFont.variable)}
-      data-color-theme={theme}
-      style={theme === "light" ? LIGHT_TOKENS : DARK_TOKENS}
+      data-color-scheme={theme}
     >
       <body>
-        <MotionConfig>
-          <Header theme={theme} />
-          <main>{children}</main>
-          <Footer />
-        </MotionConfig>
+        <ThemeProvider initialTheme={theme}>
+          <MotionConfig>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </MotionConfig>
+        </ThemeProvider>
       </body>
     </html>
   );
